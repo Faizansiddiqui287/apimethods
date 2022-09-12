@@ -33,6 +33,8 @@ function NavigationBar() {
 
   const [apiData, setApiData] = useState([]);
   const [open, setOpen] = useState(false);
+  const [newModal, setNewModal] =useState(false);
+  // const [updateName, setUpdateName] =useState("")
   const [name,setName] = useState("");
   const [firstName, setFirstName] =useState({
     id:0,
@@ -42,12 +44,16 @@ function NavigationBar() {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handlemodalOpen = () =>setNewModal(true);
+  const handleModalClose = ()=>setNewModal(false);
+  
+  
 
-
+  const baseURL = 'https://reqres.in'
 
   // Get request
   let userData = () => {
-    axios.get('https://reqres.in/api/users?page=1')
+    axios.get(`${baseURL}/api/users?page=1`)
       .then(res => {
         // console.log(res.data)
         // setApiData(res?.data?.data)
@@ -61,14 +67,29 @@ function NavigationBar() {
 
   }
 
+  //Delete data
+
+
   // Post Request
- const postData=()=>{
-  const url = 'https://reqres.in/api/users';
-  axios.post(url,firstName)
-  .then((res)=>{
-    console.log(res)
-  })
- }
+//  const postData=()=>{
+//   const url = `${baseURL}/api/users`;
+//   axios.post(url,firstName)
+//   .then((res)=>{
+//     console.log(res)
+//   })
+//  }
+
+ //Put Request
+//  function updatePost() {
+//   axios
+//     .put(`${baseURL}/api/users/2`, {
+//       title: "Hello World!",
+//       body: "This is an updated post."
+//     })
+//     .then((response) => {
+//       setPost(response.data);
+//     });
+// }
 
   return (
     <>
@@ -90,7 +111,7 @@ function NavigationBar() {
           apiData.map((item, idx) => {
             return (
               <div style={{ display: "flex" }} key={idx}>
-                <Button variant="outlined"><EditIcon /></Button>
+                <Button variant="outlined" onClick={handlemodalOpen} ><EditIcon /></Button>
                 <List
                   sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
                   aria-label="contacts"
@@ -101,7 +122,7 @@ function NavigationBar() {
                     </ListItemButton>
                   </ListItem>
                 </List>
-                <Button variant="outlined"><DeleteIcon /></Button>
+                <Button variant="outlined" ><DeleteIcon /></Button>
               </div>
             )
           })
@@ -119,13 +140,31 @@ function NavigationBar() {
           <Box sx={style}>
             <form>
               Name: <input type="text" onChange={(e)=>setName(e.target.value)} style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
-              <Button onClick={postData} style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
+              <Button style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
             </form>
 
           </Box>
         </Modal>
       </div>
 
+      {/* ---------Modal for update user-------------- */}
+      <div>
+        <Modal
+          open={newModal}
+          onClose={handleModalClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <form>
+              Name: <input type="text" style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
+              <Button style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
+            </form>
+
+          </Box>
+        </Modal>
+      </div>
+      
     </>
   )
 }
