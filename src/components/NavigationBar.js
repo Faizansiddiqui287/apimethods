@@ -34,18 +34,18 @@ function NavigationBar() {
   const [apiData, setApiData] = useState([]);
   const [open, setOpen] = useState(false);
   const [newModal, setNewModal] =useState(false);
-  // const [updateName, setUpdateName] =useState("")
-  const [name,setName] = useState("");
-  const [firstName, setFirstName] =useState({
-    id:0,
-    first_name:name
-  })
+  const [createNewName, setCreateNewName] =useState("")
+  const [getCreatename, setGetCreateName] = useState("");
+  const [updateUserName, setUpdateUserName] =useState("")
+  const [updateUserData, setUpdateUserData] = useState("")
+ 
 
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handlemodalOpen = () =>setNewModal(true);
   const handleModalClose = ()=>setNewModal(false);
+  
   
   
 
@@ -56,7 +56,6 @@ function NavigationBar() {
     axios.get(`${baseURL}/api/users?page=1`)
       .then(res => {
         // console.log(res.data)
-        // setApiData(res?.data?.data)
         setApiData(res?.data?.data)
       }).catch(err => {
         alert("something wrong")
@@ -71,25 +70,60 @@ function NavigationBar() {
 
 
   // Post Request
-//  const postData=()=>{
-//   const url = `${baseURL}/api/users`;
-//   axios.post(url,firstName)
-//   .then((res)=>{
-//     console.log(res)
-//   })
-//  }
+  const createName=(e)=>{
+    setCreateNewName(e.target.value)
+  }
+  const createNewUser =()=>{
+    setGetCreateName(createNewName);
+    // console.log(createNewName)
 
- //Put Request
-//  function updatePost() {
-//   axios
-//     .put(`${baseURL}/api/users/2`, {
-//       title: "Hello World!",
-//       body: "This is an updated post."
-//     })
-//     .then((response) => {
-//       setPost(response.data);
-//     });
-// }
+
+    axios.post(`${baseURL}/api/users`,{
+      name:{getCreatename},
+      job: "Developer"
+    }).then((res)=> console.log(res))
+    .catch((err)=>console.log(err))
+  }
+
+//Put request
+const updateName = (e)=>{
+  setUpdateUserName(e.target.value)
+}
+
+const updateNewUser = (id)=>{
+  setUpdateUserData(updateUserName)
+  console.log(updateUserName)
+  axios.put(`${baseURL}/api/users/${id}`,{
+    name:{updateUserData},
+    job: "Developer"
+  })
+  .then((res)=>{
+    console.log(res)
+    userData();
+    handleModalClose();
+  })
+  .catch((err)=>console.log(err))
+}
+
+
+//Delete  
+const deleteData = (id)=>{
+  axios.delete(`${baseURL}/api/users/${id}`)
+  .then((res)=>{
+    if(res.status === 204){
+      alert("Data deleted");
+      userData();
+    }
+    
+  });
+ 
+ 
+
+}
+
+
+
+
 
   return (
     <>
@@ -108,11 +142,12 @@ function NavigationBar() {
 
       <div className='main-container'>
         {
-          apiData.map((item, idx) => {
+          apiData.map((item) => {
             return (
-              <div style={{ display: "flex" }} key={idx}>
+              <div style={{ display: "flex" }} >
                 <Button variant="outlined" onClick={handlemodalOpen} ><EditIcon /></Button>
                 <List
+                key={item.id}
                   sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
                   aria-label="contacts"
                 >
@@ -122,7 +157,7 @@ function NavigationBar() {
                     </ListItemButton>
                   </ListItem>
                 </List>
-                <Button variant="outlined" ><DeleteIcon /></Button>
+                <Button variant="outlined" onClick={deleteData} ><DeleteIcon /></Button>
               </div>
             )
           })
@@ -139,8 +174,8 @@ function NavigationBar() {
         >
           <Box sx={style}>
             <form>
-              Name: <input type="text" onChange={(e)=>setName(e.target.value)} style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
-              <Button style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
+              Name: <input type="text" onChange={createName} style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
+              <Button onClick={createNewUser} style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
             </form>
 
           </Box>
@@ -157,8 +192,8 @@ function NavigationBar() {
         >
           <Box sx={style}>
             <form>
-              Name: <input type="text" style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
-              <Button style={{ marginLeft: "132px", marginTop: "20px" }}>Create user <AddCircleOutlineIcon /></Button>
+              Name: <input type="text" onChange={updateName} style={{ height: "50px", fontSize: "20px", outline: "none", borderRadius: "10px" }} placeholder="Enter name" />
+              <Button onClick={updateNewUser} style={{ marginLeft: "132px", marginTop: "20px" }}>Update Data <AddCircleOutlineIcon /></Button>
             </form>
 
           </Box>
